@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/assets/style.css">
+
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <h1 id="roomTitle">Chat Room</h1>
+    </div>
+
+    <div class="card">
+        <form id="inform" action="/api/chat" method="POST">
+            <label for="username">Name:</label>
+            <input name="username" type="text">
+            <label for="msg">Message:</label>
+            <input name="msg" type="text">
+            <input id="sendBtn" type="button" value="Send">
+        </form>
+    </div>
+
+    <div class="chatbox">
+        <pre id="chatbox">Loading...</pre>
+    </div>
+
+</body>
+
+
+
+
+
+  <script>
+    function room() {
+      var room = window.location.href.substring(window.location.href.lastIndexOf("/")+1);
+      if (room=="") room = "general";
+      return "/api/chat/"+room;
+    }
+
+    function updateChat() {
+      $.get(room(), function(data) {
+        $("#chatbox").text(data);
+        window.setTimeout(updateChat, 1500);
+      })
+    }
+
+    function sendmessage() {
+      $.post(room(), $("#inform").serialize() );
+    }
+
+    $(document).ready(function() {
+        var roomName = room().substring("/api/chat/".length);
+      $("#chatbox").text("Loading chat...");
+      $("#sendBtn").click(sendmessage)
+      window.setTimeout(updateChat, 1500);
+      $("#roomTitle").text("Chat Room - " + roomName);
+      
+    });
+
+  </script>
+</html>
+
+
+
+
